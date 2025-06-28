@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Peserta Terdaftar - RT 13</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body
+  class="min-h-screen flex flex-col text-gray-800 font-sans"
+  style="background-image: url('image/bg-semangat.jpeg'); background-size: cover; background-repeat: no-repeat; background-attachment: fixed; background-position: center;"
+>
+
+  <!-- Header -->
+  <header class="bg-red-600 text-white py-4 sticky top-0 shadow z-50 md:py-10">
+    <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
+      <h1 class="text-lg md:text-2xl font-bold">Daftar Perserta</h1>
+      <nav class="hidden md:flex gap-4 text-sm md:text-base">
+        <a href="index.html" class="hover:underline">Beranda</a>
+       
+      </nav>
+      <div class="md:hidden">
+        <button id="menuBtn">
+          <svg class="w-7 h-7 fill-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div id="mobileMenu" class="md:hidden hidden px-4 pb-4">
+      <a href="index.html" class="block py-2 hover:underline">Beranda</a>
+      
+    </div>
+  </header>
+
+  <!-- Konten Utama -->
+  <main class="flex-1 py-12 px-4 backdrop-brightness-90">
+    <div class="max-w-4xl mx-auto bg-white bg-opacity-90 rounded-lg shadow p-6">
+      <!-- Filter Kategori -->
+      <div class="mb-6">
+        <label class="block font-semibold mb-2">Filter berdasarkan Kategori:</label>
+        <select id="filterKategori" onchange="filterData()" class="w-full md:w-64 p-2 rounded border border-gray-300">
+          <option value="">Semua Kategori</option>
+          <option value="TK">TK</option>
+          <option value="SD">SD</option>
+          <option value="SMP">SMP</option>
+          <option value="SMA">SMA</option>
+          <option value="Mahasiswa">Mahasiswa</option>
+        </select>
+      </div>
+
+      <!-- Jumlah Peserta -->
+      <div id="jumlahPeserta" class="mb-4 text-sm text-gray-700"></div>
+
+      <!-- Tombol PDF -->
+      <button onclick="window.print()" class="mb-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+        📄 Simpan / Cetak PDF
+      </button>
+
+      <!-- Tabel Data -->
+      <div class="overflow-x-auto bg-white rounded-lg shadow">
+        <table class="min-w-full table-auto border">
+          <thead class="bg-gray-100 text-left">
+            <tr>
+              <th class="p-2 border">No</th>
+              <th class="p-2 border">Nama</th>
+              <th class="p-2 border">Usia</th>
+              <th class="p-2 border">Kategori</th>
+              <th class="p-2 border">Lomba</th>
+              <th class="p-2 border">Alamat</th>
+            </tr>
+          </thead>
+          <tbody id="dataPeserta"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-red-600 text-white py-4 text-center md:py-10">
+    <p class="text-sm">&copy; 2025 Ridho Sudrajat - Talaga Bestari</p>
+  </footer>
+
+  <!-- Script -->
+  <script>
+    const dataPeserta = [];
+
+    async function getData() {
+      try {
+        const res = await fetch('https://script.google.com/macros/s/AKfycbzBJ_XibDh64PfJQrKrZHMYdrFE2JdmficAldtfg6OfVZPzlsAUMd7IYtMUIDAqYnZwSQ/exec');
+        const data = await res.json();
+        dataPeserta.push(...data);
+        tampilkanData();
+      } catch (err) {
+        document.getElementById("dataPeserta").innerHTML = `
+          <tr>
+            <td colspan="6" class="text-center p-4 text-red-500">Gagal memuat data</td>
+          </tr>`;
+      }
+    }
+
+    function tampilkanData(kategori = '') {
+      const tbody = document.getElementById("dataPeserta");
+      tbody.innerHTML = "";
+
+      const filtered = kategori
+        ? dataPeserta.filter(p => p.Kategori === kategori)
+        : dataPeserta;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="text-center p-4">Tidak ada data.</td>
+          </tr>`;
+      } else {
+        filtered.forEach((p, i) => {
+          tbody.innerHTML += `
+            <tr>
+              <td class="border p-2">${i + 1}</td>
+              <td class="border p-2">${p.Nama || '-'}</td>
+              <td class="border p-2">${p.Usia || '-'}</td>
+              <td class="border p-2">${p.Kategori || '-'}</td>
+              <td class="border p-2">${p.Lomba || '-'}</td>
+              <td class="border p-2">${p.Alamat || '-'}</td>
+            </tr>`;
+        });
+      }
+
+      // Hitung jumlah peserta per kategori
+      const kategoriCounts = {};
+      dataPeserta.forEach(p => {
+        kategoriCounts[p.Kategori] = (kategoriCounts[p.Kategori] || 0) + 1;
+      });
+
+      const countDisplay = Object.entries(kategoriCounts)
+        .map(([kategori, jumlah]) => `${kategori}: ${jumlah} orang`)
+        .join(' | ');
+
+      document.getElementById("jumlahPeserta").textContent = "Jumlah Peserta: " + countDisplay;
+    }
+
+    function filterData() {
+      const kategori = document.getElementById("filterKategori").value;
+      tampilkanData(kategori);
+    }
+
+    // Menu mobile toggle
+    document.getElementById("menuBtn").addEventListener("click", () => {
+      document.getElementById("mobileMenu").classList.toggle("hidden");
+    });
+
+    // Jalankan saat halaman dimuat
+    getData();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - RT 13</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans">
+  <header class="bg-red-600 text-white py-4 shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
+      <h1 class="text-xl font-bold">Admin Panel RT 13</h1>
+      <nav class="flex space-x-4">
+        <a href="index.html" class="hover:underline">Beranda</a>
+        <a href="daftar.html" class="hover:underline">Daftar</a>
+        <a href="peserta.html" class="hover:underline">Peserta</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 py-10">
+    <h2 class="text-2xl font-bold mb-6">Daftar Peserta</h2>
+    <div class="overflow-x-auto bg-white rounded shadow">
+      <table class="min-w-full table-auto">
+        <thead class="bg-gray-200 text-left">
+          <tr>
+            <th class="p-2 border">No</th>
+            <th class="p-2 border">Nama</th>
+            <th class="p-2 border">Usia</th>
+            <th class="p-2 border">Kategori</th>
+            <th class="p-2 border">Lomba</th>
+            <th class="p-2 border">Alamat</th>
+            <th class="p-2 border">Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="adminTable"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <footer class="bg-red-600 text-white py-4 text-center">
+    <p class="text-sm">&copy; 2025 Ridho Sudrajat - Talaga Bestari</p>
+  </footer>
+
+  <script>
+    const ENDPOINT = "https://script.google.com/macros/s/AKfycbzBJ_XibDh64PfJQrKrZHMYdrFE2JdmficAldtfg6OfVZPzlsAUMd7IYtMUIDAqYnZwSQ/exec";
+    let peserta = [];
+
+    async function fetchData() {
+      const res = await fetch(ENDPOINT);
+      peserta = await res.json();
+      renderTable();
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById("adminTable");
+      tbody.innerHTML = "";
+      peserta.forEach((p, i) => {
+        tbody.innerHTML += `
+          <tr>
+            <td class="border p-2">${i + 1}</td>
+            <td class="border p-2">${p.Nama}</td>
+            <td class="border p-2">${p.Usia}</td>
+            <td class="border p-2">${p.Kategori}</td>
+            <td class="border p-2">${p.Lomba}</td>
+            <td class="border p-2">${p.Alamat}</td>
+            <td class="border p-2 space-x-2">
+              <button onclick="editData(${i})" class="bg-yellow-500 text-white px-2 py-1 rounded">Edit</button>
+              <button onclick="deleteData(${i})" class="bg-red-600 text-white px-2 py-1 rounded">Hapus</button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    function editData(index) {
+      const p = peserta[index];
+      Swal.fire({
+        title: 'Edit Data',
+        html:
+          `<input id="swal-nama" class="swal2-input" placeholder="Nama" value="${p.Nama}">` +
+          `<input id="swal-usia" class="swal2-input" placeholder="Usia" value="${p.Usia}">` +
+          `<input id="swal-kategori" class="swal2-input" placeholder="Kategori" value="${p.Kategori}">` +
+          `<input id="swal-lomba" class="swal2-input" placeholder="Lomba" value="${p.Lomba}">` +
+          `<input id="swal-alamat" class="swal2-input" placeholder="Alamat" value="${p.Alamat}">`,
+        confirmButtonText: 'Simpan',
+        showCancelButton: true,
+        preConfirm: async () => {
+          const data = {
+            nama: document.getElementById("swal-nama").value,
+            usia: document.getElementById("swal-usia").value,
+            kategori: document.getElementById("swal-kategori").value,
+            lomba: document.getElementById("swal-lomba").value,
+            alamat: document.getElementById("swal-alamat").value
+          };
+          await fetch(ENDPOINT + "?method=put", {
+            method: "POST",
+            body: JSON.stringify(data)
+          });
+          fetchData();
+        }
+      });
+    }
+
+    function deleteData(index) {
+      const p = peserta[index];
+      Swal.fire({
+        title: `Hapus data ${p.Nama}?`,
+        showCancelButton: true,
+        confirmButtonText: 'Hapus',
+        preConfirm: async () => {
+          await fetch(ENDPOINT + "?method=delete", {
+            method: "POST",
+            body: JSON.stringify({ nama: p.Nama, usia: p.Usia, kategori: p.Kategori })
+          });
+          fetchData();
+        }
+      });
+    }
+
+    fetchData();
+  </script>
+</body>
+</html>

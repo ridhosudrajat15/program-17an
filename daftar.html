@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Formulir Pendaftaran Lomba RT 13</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeIn 1s ease-out forwards;
+    }
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body class="text-gray-800 font-sans">
+
+  <!-- Header -->
+ <header class="bg-red-600 text-white shadow-md sticky top-0 z-50 py-3 md:py-5">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+      <h1 class="text-lg md:text-2xl font-bold">DIRGAHAYU REPUBLIK INDONESIA</h1>
+      <button id="menuBtn" class="md:hidden">
+        <svg class="w-7 h-7 fill-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+          viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+      <nav class="hidden md:flex space-x-6 text-sm md:text-base">
+        <a href="index.html" class="hover:underline">Beranda</a>
+        <a href="peserta.html" class="hover:underline">Anggota Terdaftar</a>
+      </nav>
+    </div>
+    <div id="mobileMenu" class="md:hidden hidden px-4 pb-4">
+      <a href="index.html" class="block py-2 hover:underline">Beranda</a>
+      <a href="peserta.html" class="block py-2 hover:underline">Anggota Terdaftar</a>
+    </div>
+  </header>
+
+  <!-- Background + Formulir -->
+  <main class="bg-cover bg-center bg-no-repeat" style="background-image: url('image/bg-pejuang.jpeg'); background-attachment: fixed;">
+    <section class="min-h-screen flex items-center justify-center px-4 py-12 backdrop-brightness-90">
+      <div class="max-w-2xl bg-white shadow-2xl rounded-xl p-8 fade-in border border-red-500 w-full backdrop-blur-sm bg-opacity-95">
+        <h2 class="text-3xl font-bold text-center text-red-700 mb-8">Formulir Pendaftaran</h2>
+
+        <form id="daftarForm" class="space-y-6">
+          <!-- Form isi (sama seperti sebelumnya) -->
+          <div>
+            <label class="block font-semibold mb-1">Nama Lengkap</label>
+            <div class="flex items-center border rounded px-3 py-2 focus-within:ring-2 focus-within:ring-red-400">
+              <svg class="w-5 h-5 mr-2 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 10a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 2c-5 0-8 2.5-8 5v1h16v-1c0-2.5-3-5-8-5z" />
+              </svg>
+              <input type="text" id="nama" class="w-full outline-none" placeholder=" Masukkan nama lengkap ">
+            </div>
+          </div>
+          <div>
+            <label class="block font-semibold mb-1">Usia</label>
+            <div class="flex items-center border rounded px-3 py-2 focus-within:ring-2 focus-within:ring-red-400">
+              <svg class="w-5 h-5 mr-2 text-red-600" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z"/>
+              </svg>
+              <input type="number" id="usia" class="w-full outline-none" placeholder=" Contoh: 12 ">
+            </div>
+          </div>
+          <div>
+            <label class="block font-semibold mb-1">Kategori Peserta</label>
+            <select id="kategori" onchange="updateLomba()" class="w-full border rounded px-4 py-2 focus:ring-2 focus:ring-red-400">
+              <option value="">-- Pilih Kategori --</option>
+              <option value="TK">TK</option>
+              <option value="SD">SD</option>
+              <option value="SMP">SMP</option>
+              <option value="SMA">SMA/SMK</option>
+              <option value="Mahasiswa">Mahasiswa</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-semibold mb-1">Pilih Lomba</label>
+            <select id="lomba" class="w-full border rounded px-4 py-2 focus:ring-2 focus:ring-red-400">
+              <option value="">-- Pilih Lomba --</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-semibold mb-1">Alamat Lengkap</label>
+            <textarea id="alamat" class="w-full border rounded px-4 py-2 focus:ring-2 focus:ring-red-400"
+              rows="2" placeholder="Contoh: Jl. Melati No. 13 RT 13"></textarea>
+          </div>
+          <div class="text-center">
+            <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-8 py-2 rounded-full font-semibold shadow-md transition-all duration-300">
+              Kirim Pendaftaran
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-red-600 text-white py-4 md:py-10 text-center text-sm md:text-base">
+    <p class="text-sm">&copy; 2025 Ridho Sudrajat - Talaga Bestari</p>
+  </footer>
+
+  <!-- Script -->
+  <script>
+    const dataLomba = {
+      TK: ["Menggambar", "Mewarnai"],
+      SD: ["Balap Karung", "Makan Kerupuk"],
+      SMP: ["Futsal Mini", "Cerdas Cermat"],
+      SMA: ["Estafet", "Panahan Tepung"],
+      Mahasiswa: ["Debat Kemerdekaan", "Mobile Legends", "MC Acara"]
+    };
+
+    function updateLomba() {
+      const kategori = document.getElementById("kategori").value;
+      const lomba = document.getElementById("lomba");
+      lomba.innerHTML = "<option value=''>-- Pilih Lomba --</option>";
+      if (dataLomba[kategori]) {
+        dataLomba[kategori].forEach(item => {
+          const option = document.createElement("option");
+          option.value = item;
+          option.textContent = item;
+          lomba.appendChild(option);
+        });
+      }
+    }
+
+    document.getElementById("daftarForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const nama = document.getElementById("nama").value.trim();
+      const usia = document.getElementById("usia").value.trim();
+      const kategori = document.getElementById("kategori").value;
+      const lomba = document.getElementById("lomba").value;
+      const alamat = document.getElementById("alamat").value.trim();
+
+      if (!nama || !usia || !kategori || !lomba || !alamat) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Form Belum Lengkap',
+          text: 'Mohon lengkapi formulir terlebih dahulu!',
+        });
+        return;
+      }
+
+      try {
+        await fetch("https://script.google.com/macros/s/AKfycbzBJ_XibDh64PfJQrKrZHMYdrFE2JdmficAldtfg6OfVZPzlsAUMd7IYtMUIDAqYnZwSQ/exec", {
+          method: "POST",
+          mode: "no-cors",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ nama, usia, kategori, lomba, alamat })
+        });
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Pendaftaran Berhasil!',
+          html: `Terima kasih, <b>${nama}</b> sudah mendaftar.`,
+          confirmButtonText: 'Oke Siap!'
+        }).then(() => {
+          document.getElementById("daftarForm").reset();
+          window.location.href = "index.html";
+        });
+
+      } catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Gagal Mengirim',
+          text: 'Terjadi kesalahan saat mengirim data. Silakan coba lagi.'
+        });
+      }
+    });
+
+    // Hamburger menu
+    const menuBtn = document.getElementById("menuBtn");
+    const mobileMenu = document.getElementById("mobileMenu");
+    menuBtn.addEventListener("click", () => {
+      mobileMenu.classList.toggle("hidden");
+    });
+  </script>
+</body>
+</html>
